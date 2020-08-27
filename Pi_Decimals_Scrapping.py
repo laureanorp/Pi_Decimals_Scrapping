@@ -3,14 +3,9 @@ from bs4 import BeautifulSoup
 import matplotlib.pyplot as plt
 import re
 
-# Errores graves a corregir
-# Un diccionario no es buena idea para meter los valores originales porque hay varios valores para la misma fecha
-# Tal y como esta el script, hay mas datos para un eje que para el otro
-# Esto quiere decir que el pulido de las fechas tiene que ser anterior a convertirlo a dos listas...
-
 
 # Extrae el HTMl, las wikitablas y las recorre una a una y luego fila a fila
-# Luego extrae el primero y quinto valor (fecha y decimales de pi) y los añade a un diccionario
+# Luego extrae el primero y quinto valor (fecha y decimales de pi) y los añade a su lista correspondiente
 # Constantes que indican la columna de la que se extraen los datos
 col1 = 0
 col2 = 4
@@ -21,7 +16,8 @@ def extract_from_table(url):
     page = requests.get(url)
     soup = BeautifulSoup(page.content, 'html.parser')
     all_tables = soup.find_all(class_='wikitable')
-    data = {}
+    years = []
+    decimals = []
     for i in range(len(all_tables)):
         table = all_tables[i]
         rows = table.find_all('tr')
@@ -33,26 +29,26 @@ def extract_from_table(url):
             else:
                 first_cell = row.find_all('td')[col1].get_text().replace('\n', '')
                 fifth_cell = row.find_all('td')[col2].get_text().replace('\n', '')
-                data[first_cell] = fifth_cell
-    return data
-
-
-# Convertir el diccionario en dos listas con los numeros filtrados
-def dict_to_lists(dict):
-    keys = list(dict.keys())
-    values = list(dict.values())
-    (keys, values) = zip(*dict.items())
-    return keys, values
+                years.append(first_cell)
+                decimals.append(fifth_cell)
+    return years, decimals
 
 
 # Eliminar lo que no son fechas de cuatro dígitos
-def leave_just_numbers(list):
+# Todo eliminar dias y meses si la fecha tiene 4 digitos de año
+def clean_numbers(list):
     four_digit_list = []
     for i in list:
-        new_i = re.findall(r'\d{4}', i)
+        new_i = re.findall(r'\d+', i)
         if new_i:
             four_digit_list.append(new_i)
     return four_digit_list
+
+
+# WIP: Funcion para eliminar un par de cosas de wikipedia que están entre corchetes
+def remove_citations(list):
+    for i in list:
+        re.sub(r'[.+?]', '', i)
 
 
 # Imprimir los datos con una gráfica escalonada, WIP [desastre en los ejes]
@@ -66,4 +62,9 @@ def plot_values(x, y):
 
 data = extract_from_table('https://en.wikipedia.org/wiki/Chronology_of_computation_of_π')
 
-plot_values(dict_to_lists(data)[0], dict_to_lists(data)[1])
+new_dates = clean_numbers(data[0])
+
+#Pruebas: Imprimir las fechas, los decimales y asegurarse de que cada lista mide lo mismo.
+print(new_dates)
+print(data[1])
+assert len(new_dates) == len(data[1])
