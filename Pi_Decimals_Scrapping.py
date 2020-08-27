@@ -3,6 +3,11 @@ from bs4 import BeautifulSoup
 import matplotlib.pyplot as plt
 import re
 
+# Errores graves a corregir
+# Un diccionario no es buena idea para meter los valores originales porque hay varios valores para la misma fecha
+# Tal y como esta el script, hay mas datos para un eje que para el otro
+# Esto quiere decir que el pulido de las fechas tiene que ser anterior a convertirlo a dos listas...
+
 
 # Extrae el HTMl, las wikitablas y las recorre una a una y luego fila a fila
 # Luego extrae el primero y quinto valor (fecha y decimales de pi) y los añade a un diccionario
@@ -55,13 +60,10 @@ def plot_values(x, y):
     plt.step(x, y)
     plt.ylabel('Number of decimal digits')
     plt.xlabel('Year')
+    plt.xticks(rotation=45, ha="right")
     plt.show()
 
 
 data = extract_from_table('https://en.wikipedia.org/wiki/Chronology_of_computation_of_π')
 
-
-print((leave_just_numbers(dict_to_lists(data)[0])))
-print((dict_to_lists(data)[1]))
-
-# plot_values(dict_to_lists(data)[0], dict_to_lists(data)[1])
+plot_values(dict_to_lists(data)[0], dict_to_lists(data)[1])
