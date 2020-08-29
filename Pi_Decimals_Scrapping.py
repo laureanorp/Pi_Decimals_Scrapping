@@ -51,7 +51,7 @@ def remove_citations(list):
         re.sub(r'[.+?]', '', i)
 
 
-# Imprimir los datos con una gráfica escalonada, WIP [desastre en los ejes]
+# Imprimir los datos con una gráfica escalonada
 def plot_values(x, y):
     plt.step(x, y)
     plt.ylabel('Number of decimal digits')
@@ -64,7 +64,12 @@ data = extract_from_table('https://en.wikipedia.org/wiki/Chronology_of_computati
 
 new_dates = clean_numbers(data[0])
 
-#Pruebas: Imprimir las fechas, los decimales y asegurarse de que cada lista mide lo mismo.
+# Prueba de plot con valores inventados
+some_years = [150, 250, 1000, 1230, 1495, 1700, 1800, 2000, 2020]
+some_decimals = [1, 3, 5, 10, 20, 2000, 30000, 100000, 200000]
+plot_values(some_years, some_decimals)
+
+# Pruebas: Imprimir las fechas, los decimales y asegurarse de que cada lista mide lo mismo.
 print(new_dates)
 print(data[1])
 assert len(new_dates) == len(data[1])
