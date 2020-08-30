@@ -4,9 +4,9 @@ import matplotlib.pyplot as plt
 import re
 
 
-# Extrae el HTMl, las wikitablas y las recorre una a una y luego fila a fila
+# Extrae el HTML, las wikitablas y las recorre una a una y luego fila a fila
 # Luego extrae el primero y quinto valor (fecha y decimales de pi) y los añade a su lista correspondiente
-# Constantes que indican la columna de la que se extraen los datos
+# Estas constantes indican la columna de la que se extraen los datos
 col1 = 0
 col2 = 4
 max_col = col2 + 1
@@ -34,21 +34,23 @@ def extract_from_table(url):
     return years, decimals
 
 
-# Eliminar lo que no son fechas de cuatro dígitos
-# Todo eliminar dias y meses si la fecha tiene 4 digitos de año
-def clean_numbers(list):
+# WIP: Simplificar todas las fechas a años de de 1-4 dígitos
+# Todo eliminar dias y meses si la fecha tiene 4 digitos, que es el año
+def clean_dates(raw_list):
     four_digit_list = []
-    for i in list:
+    for i in raw_list:
         new_i = re.findall(r'\d+', i)
         if new_i:
             four_digit_list.append(new_i)
     return four_digit_list
 
 
-# WIP: Funcion para eliminar un par de cosas de wikipedia que están entre corchetes
-def remove_citations(list):
-    for i in list:
-        re.sub(r'[.+?]', '', i)
+# Eliminar varios elementos de wikipedia que están entre corchetes y unas fórmulas
+def clean_decimals(raw_list):
+    clean_list = []
+    for i in raw_list:
+        clean_list.append(re.split("[=[:]+", i)[0])
+    return clean_list
 
 
 # Imprimir los datos con una gráfica escalonada
@@ -60,16 +62,17 @@ def plot_values(x, y):
     plt.show()
 
 
-data = extract_from_table('https://en.wikipedia.org/wiki/Chronology_of_computation_of_π')
 
-new_dates = clean_numbers(data[0])
-
-# Prueba de plot con valores inventados
+# Entragable inicial de un plot con valores inventados
 some_years = [150, 250, 1000, 1230, 1495, 1700, 1800, 2000, 2020]
 some_decimals = [1, 3, 5, 10, 20, 2000, 30000, 100000, 200000]
 plot_values(some_years, some_decimals)
 
-# Pruebas: Imprimir las fechas, los decimales y asegurarse de que cada lista mide lo mismo.
-print(new_dates)
-print(data[1])
-assert len(new_dates) == len(data[1])
+
+# Pruebas: Imprimir las fechas, los decimales y asegurarse de que cada lista sigue midiendo lo mismo.
+data = extract_from_table('https://en.wikipedia.org/wiki/Chronology_of_computation_of_π')
+final_dates = clean_dates(data[0])
+final_decimals = clean_decimals(data[1])
+print(final_dates)
+print(final_decimals)
+assert len(final_dates) == len(final_decimals)
