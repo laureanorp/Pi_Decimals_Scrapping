@@ -59,6 +59,7 @@ def plot_values(x, y):
     plt.ylabel('Number of decimal digits')
     plt.xlabel('Year')
     plt.xticks(rotation=45, ha="right")
+    plt.yscale('log')
     plt.show()
 
 
