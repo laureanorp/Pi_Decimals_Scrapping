@@ -56,12 +56,28 @@ def clean_decimals(raw_list):
 # Imprimir los datos con una gráfica escalonada
 def plot_values(x, y):
     mpl.rcParams["figure.figsize"] = [10, 7]
+    start_x = None
+    while start_x is None:
+        input_value = input('Write a starting year between 150 and 2019: ')
+        try:
+            if 0 <= int(input_value) <= 2019:
+                start_x = int(input_value)
+            else:
+                print("That's not a correct number, try again.")
+        except:
+            print("That's not a correct number, try again.")
+    for i in x:
+        if i >= start_x:
+            start_index = x.index(i)
+            break
+    x = x[(start_index):]
+    y = y[(start_index):]
     plt.step(x, y)
     plt.ylabel('Number of decimal digits')
     plt.xlabel('Year')
     plt.xticks(rotation=45, ha="right")
     plt.yscale('log')
-    plt.xticks(np.arange(0, 2100, step=100))
+    # plt.xticks(np.arange(0, 2100, step=100))
     plt.show()
 
 
@@ -69,16 +85,17 @@ data = extract_from_table('https://en.wikipedia.org/wiki/Chronology_of_computati
 # Limpieza manual de datos: Eliminar un valor molesto que impide convertir la lista a numeros enteros hasta que lo resuelva...
 del data[0][32]
 del data[1][32]
+# Eliminar las fechas a.C
+del data[0][:11]
+del data[1][:11]
 # Elimino también un outlier de la tabla de wikipedia (año 1897) y una fecha en formato de siglo (s. 18)
-del data[0][47]
-del data[1][47]
-del data[0][40]
-del data[1][40]
-# Pruebas: Imprimir las fechas, los decimales y asegurarse de que cada lista sigue midiendo lo mismo.
+del data[0][36]
+del data[1][36]
+del data[0][29]
+del data[1][29]
+# Asegurarse de que cada lista sigue midiendo lo mismo.
 final_dates = clean_dates(data[0])
 final_decimals = clean_decimals(data[1])
-print(final_dates)
-print(final_decimals)
 assert len(final_dates) == len(final_decimals)
 # Plot con valores reales a partir del año 150 d.C (para evitar "negativos")
-plot_values(final_dates[11:], final_decimals[11:])
+plot_values(final_dates, final_decimals)
