@@ -77,6 +77,7 @@ def plot_values(x, y):
     plt.xlabel('Year')
     plt.xticks(rotation=45, ha="right")
     plt.yscale('log')
+    plt.grid(True, axis='y')
     # plt.xticks(np.arange(0, 2100, step=100))
     plt.show()
 
