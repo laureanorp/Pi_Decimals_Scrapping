@@ -2,7 +2,6 @@ import requests
 from bs4 import BeautifulSoup
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-import numpy as np
 import re
 
 
@@ -69,16 +68,15 @@ def plot_values(x, y):
     for i in x:
         if i >= start_x:
             start_index = x.index(i)
+            x = x[(start_index):]
+            y = y[(start_index):]
             break
-    x = x[(start_index):]
-    y = y[(start_index):]
     plt.step(x, y)
     plt.ylabel('Number of decimal digits')
     plt.xlabel('Year')
     plt.xticks(rotation=45, ha="right")
     plt.yscale('log')
     plt.grid(True, axis='y')
-    # plt.xticks(np.arange(0, 2100, step=100))
     plt.show()
 
 
