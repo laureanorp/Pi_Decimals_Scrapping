@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import numpy as np
 import re
 
 
@@ -38,7 +39,7 @@ def clean_dates(raw_list):
     for i in raw_list:
         new_i = re.findall(r'\d+', i)
         if new_i:
-            new_i = new_i[-1]
+            new_i = int(new_i[-1])
             year_digit_list.append(new_i)
     return year_digit_list
 
@@ -48,7 +49,7 @@ def clean_decimals(raw_list):
     clean_list = []
     for i in raw_list:
         i = i.replace(',', '')
-        clean_list.append(re.split("[=[:]+", i)[0])
+        clean_list.append(int(re.split("[=[:]+", i)[0]))
     return clean_list
 
 
@@ -60,20 +61,19 @@ def plot_values(x, y):
     plt.xlabel('Year')
     plt.xticks(rotation=45, ha="right")
     plt.yscale('log')
+    # plt.xticks([])
     plt.show()
 
 
-# Entragable inicial de un plot con valores inventados
-# some_years = [150, 250, 1000, 1230, 1495, 1700, 1800, 2000, 2020]
-# some_decimals = [1, 3, 5, 10, 20, 2000, 30000, 100000, 20000000]
-
 # Pruebas: Imprimir las fechas, los decimales y asegurarse de que cada lista sigue midiendo lo mismo.
 data = extract_from_table('https://en.wikipedia.org/wiki/Chronology_of_computation_of_π')
+# He quitado un valor bastante molesto que impedia convertir la lista a numeros enteros hasta que lo resuelva...
+del data[0][32]
+del data[1][32]
 final_dates = clean_dates(data[0])
 final_decimals = clean_decimals(data[1])
 print(final_dates)
 print(final_decimals)
 assert len(final_dates) == len(final_decimals)
-
 # Prueba de plot con valores reales a partir del año 150 d.C (para evitar "negativos")
 plot_values(final_dates[11:], final_decimals[11:])
