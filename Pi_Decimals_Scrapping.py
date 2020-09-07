@@ -33,7 +33,7 @@ def extract_from_table(url):
     return years, decimals
 
 
-# WIP: Simplificar todas las fechas a solo el año, cogiendo solo el último número
+# Simplificar todas las fechas a solo el año, cogiendo solo el último número
 def clean_dates(raw_list):
     year_digit_list = []
     for i in raw_list:
@@ -61,19 +61,24 @@ def plot_values(x, y):
     plt.xlabel('Year')
     plt.xticks(rotation=45, ha="right")
     plt.yscale('log')
-    # plt.xticks([])
+    plt.xticks(np.arange(0, 2100, step=100))
     plt.show()
 
 
-# Pruebas: Imprimir las fechas, los decimales y asegurarse de que cada lista sigue midiendo lo mismo.
 data = extract_from_table('https://en.wikipedia.org/wiki/Chronology_of_computation_of_π')
-# He quitado un valor bastante molesto que impedia convertir la lista a numeros enteros hasta que lo resuelva...
+# Limpieza manual de datos: Eliminar un valor molesto que impide convertir la lista a numeros enteros hasta que lo resuelva...
 del data[0][32]
 del data[1][32]
+# Elimino también un outlier de la tabla de wikipedia (año 1897) y una fecha en formato de siglo (s. 18)
+del data[0][47]
+del data[1][47]
+del data[0][40]
+del data[1][40]
+# Pruebas: Imprimir las fechas, los decimales y asegurarse de que cada lista sigue midiendo lo mismo.
 final_dates = clean_dates(data[0])
 final_decimals = clean_decimals(data[1])
 print(final_dates)
 print(final_decimals)
 assert len(final_dates) == len(final_decimals)
-# Prueba de plot con valores reales a partir del año 150 d.C (para evitar "negativos")
+# Plot con valores reales a partir del año 150 d.C (para evitar "negativos")
 plot_values(final_dates[11:], final_decimals[11:])
